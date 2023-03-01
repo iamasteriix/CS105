@@ -3,6 +3,6 @@ And they have no disregard for human life.
 3 -781
 36 3
 
-# collaborators:
+# Collaborators:
 # - Russell Omondi
 # - Chuck Lugai
