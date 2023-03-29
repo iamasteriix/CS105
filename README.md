@@ -6,4 +6,4 @@ performance, portability, and robustness. It also serves as a foundation for cou
 operating systems, security, and computer architecture, where a deeper understanding of systems-level issues
 is required. Topics covered include: data representations, computer arithmetic, machine-level code and its
 generation, performance evaluation and optimization, memory organization and management, processes and
-concurrent computation, and networking technology and protocols
+concurrent computation, and networking technology and protocols.

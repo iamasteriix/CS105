@@ -1,3 +1,7 @@
+/*
+ * @author: Chuck Lugai
+ * @author: Omosh Otieno
+ */
 48 c7 c7 e7 de 6a 27 c3
 74 20 73 74 68 20 6f 6e
 65 20 63 6f 6e 73 69 64
@@ -7,8 +11,3 @@
 6e 69 76 65 72 73 65 2e
 48 9d 61 55 00 00 00 00
 fb 17 40 00 00 00 00 00
-
-/*
- * @author: Chuck Lugai
- * @author: Russell Otieno
- */
