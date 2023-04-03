@@ -223,7 +223,6 @@ int main(int argc, char *argv[])
       assert(args[num_words] == NULL);
 
       // TODO #1: run the command
-      // TODO #2: print status if non-zero
       pid_t cpid = fork();
       int wstatus;
       char *noenviron[] = { NULL };
