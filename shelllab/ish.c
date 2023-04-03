@@ -228,8 +228,10 @@ int main(int argc, char *argv[])
       char *noenviron[] = { NULL };
       // code executed by child (cpid: child process id)
       if (cpid == 0) {
-        if (execve(args[0], args, noenviron) < 0)
+        if (execve(args[0], args, noenviron) < 0) {
           perror("ish: command error");
+          exit(0);
+        }
       }
       // code executed by parent
       if (!run_in_background) waitpid(cpid, &wstatus, 0);
@@ -239,6 +241,7 @@ int main(int argc, char *argv[])
       if (exit_status != 0) fprintf(stderr, "ish: status %d\n", exit_status);
 
       // TODO #3: run background jobs in the background
+      add_job(argv[0], cpid);
 
       // Free the args array allocated by parse line
       free(args);
