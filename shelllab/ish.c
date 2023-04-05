@@ -118,7 +118,14 @@ void free_job(job_t *j)
 void check_jobs(int options)
 {
   // TODO #4: check each job in turn and output its status
-  // need to get job
+  job_t *job = jobs;
+  int wstatus;
+
+  // -1 pid: wait for any child processes
+  while (waitpid(-1, &wstatus, options) > 0) {
+    if (wstatus) fprintf(stderr, "job '%s' status %d\n", job->command, job->status);
+    else fprintf(stderr, "job '%s' complete\n", job->command, wstatus);
+  }
 }
 
 // ----------------------------------------------------------------
@@ -181,7 +188,7 @@ int main(int argc, char *argv[])
       {
         // TODO #4: wait for all jobs to finish
         if (jobs) {
-          fprintf(stderr, "Jobs are still running...\n");
+          fprintf(stderr, "\nJobs are still running...\n");
           check_jobs(0); // set options to 0 for now, I think
         }
         fprintf(stderr, "\nGoodbye!\n");
