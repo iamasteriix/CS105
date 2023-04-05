@@ -118,8 +118,7 @@ void free_job(job_t *j)
 void check_jobs(int options)
 {
   // TODO #4: check each job in turn and output its status
-  struct job_t *j = job;
-  printf("%d\n", j->status);
+  // while (waitpid, 
 }
 
 // ----------------------------------------------------------------
@@ -156,6 +155,10 @@ void setup_signal_handlers()
 
 int main(int argc, char *argv[])
 {
+  pid_t cpid;
+  int wstatus;
+  char *noenviron[] = { NULL };
+
   // Handle signals from OS
   setup_signal_handlers();
 
@@ -181,9 +184,9 @@ int main(int argc, char *argv[])
       if (!errno)
       {
         // TODO #4: wait for all jobs to finish
-        if (jobs) {
+        if (cpid != 0) {
           fprintf(stderr, "Jobs are still running...\n");
-          check_jobs(0); // set options to 0 for now, I think
+          printf("%d", wstatus);
         }
         fprintf(stderr, "\nGoodbye!\n");
         return 0;
@@ -228,11 +231,7 @@ int main(int argc, char *argv[])
       assert(args[num_words] == NULL);
 
       // TODO #1: run the command
-      pid_t cpid;
-      int wstatus;
-      char *noenviron[] = { NULL };
-      // code executed by child (cpid: child process id)
-      if ((cpid = fork()) == 0) {
+      if ((cpid = fork()) == 0) { // code executed by child
         if (execve(args[0], args, noenviron) < 0) {
           perror("ish: command error");
           exit(0);
