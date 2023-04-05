@@ -119,10 +119,11 @@ void check_jobs(int options)
 {
   // TODO #4: check each job in turn and output its status
   job_t *job = jobs;
+  pid_t jpid;
   int wstatus;
 
   // -1 pid: wait for any child processes
-  while (waitpid(-1, &wstatus, options) > 0) {
+  while ((jpid = (waitpid(-1, &wstatus, options)) > 0) {
     if (wstatus) fprintf(stderr, "job '%s' status %d\n", job->command, job->status);
     else fprintf(stderr, "job '%s' complete\n", job->command, wstatus);
   }
