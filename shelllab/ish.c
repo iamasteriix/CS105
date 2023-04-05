@@ -118,8 +118,7 @@ void free_job(job_t *j)
 void check_jobs(int options)
 {
   // TODO #4: check each job in turn and output its status
-  struct job_t *j = job;
-  printf("%d\n", j->status);
+  // need to get job
 }
 
 // ----------------------------------------------------------------
