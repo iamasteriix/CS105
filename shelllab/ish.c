@@ -119,13 +119,16 @@ void check_jobs(int options)
 {
   // TODO #4: check each job in turn and output its status
   job_t *job = jobs;
+  job_t *temp;
   pid_t jpid;
   int wstatus;
 
-  // -1 pid: wait for any child processes
-  while ((jpid = (waitpid(-1, &wstatus, options)) > 0) {
-    if (wstatus) fprintf(stderr, "job '%s' status %d\n", job->command, job->status);
-    else fprintf(stderr, "job '%s' complete\n", job->command, wstatus);
+  while (job) {
+    if (WIFSTOPPED(job->status)) fprintf(stderr, "job '%s' status %d\n", job->command, job->status);
+    else fprintf(stderr, "job '%s' complete\n", job->command);
+    temp = job->next;
+    free_job(job);
+    job = temp;
   }
 }
 
@@ -245,15 +248,16 @@ int main(int argc, char *argv[])
           exit(0);
         }
       }
+
       // code executed by parent
-      if (!run_in_background) waitpid(cpid, &wstatus, 0);
-
       // TODO #2: print status if non-zero
-      int exit_status = WEXITSTATUS(wstatus);
-      if (exit_status != 0) fprintf(stderr, "ish: status %d\n", exit_status);
-
+      if (!run_in_background) {
+        int exit_status = WEXITSTATUS(wstatus);
+        if (exit_status != 0) fprintf(stderr, "ish: status %d\n", exit_status);
+        waitpid(cpid, &wstatus, 0);
+      }
       // TODO #3: run background jobs in the background
-      add_job(argv[0], cpid);
+      else add_job(argv[0], cpid);
 
       // Free the args array allocated by parse line
       free(args);
