@@ -128,7 +128,7 @@ void check_jobs(int options)
   // else if terminated successfully, print job command complete
   while (jptr) {
     if ((jpid = waitpid(job->pid, &job->status, options) == 0)
-      fprintf("job %s still running\n", job->command);
+      fprintf("job '%s' still running\n", job->command);
     if (WIFSTOPPED(job->status))
       fprintf(stderr, "job '%s' status %d\n", job->command, job->status);
     else fprintf(stderr, "job '%s' complete\n", job->command);
