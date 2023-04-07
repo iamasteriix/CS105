@@ -147,8 +147,14 @@ void check_jobs(int options)
 //          |___/                                                   |___/
 // ----------------------------------------------------------------
 
-// TODO #6: Add received_signal_from_child global variable an
+// TODO #6: Add received_signal_from_child global variable and
 // create handle_signal_from_child function
+int received_signal_from_child = 0;
+
+void handle_signal_from_child(int sig) {
+  received_signal_from_child = sig;
+  return;
+}
 
 void setup_signal_handlers()
 {
@@ -160,6 +166,10 @@ void setup_signal_handlers()
   sigaction(SIGINT, &action, NULL);
 
   // TODO #6: set handler for SIGCHLD signal
+  sigemptyset(&action.sa_mask);
+  action.sa_flags = SA_RESTART;
+  action.sa_handler = handle_signal_from_child;
+  sigaction(SIGCHLD, &action, NULL);
 }
 
 // ----------------------------------------------------------------
@@ -179,10 +189,12 @@ int main(int argc, char *argv[])
   while (1)
   {
     // TODO #5: check on jobs, update the user
-    // check jobs and return immediately if no child has exited
-    check_jobs(WNOHANG);
-
     // TODO #6: only update the user when something has changed
+    if (received_signal_from_child) {
+      check_jobs(WNOHANG) // check jobs and return immediately if no child has exited
+      received_signal_from_child = 0;
+    }
+
 
     // Print prompt to screen
     fprintf(stderr, "¢ ");
