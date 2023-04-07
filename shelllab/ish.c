@@ -111,24 +111,30 @@ void free_job(job_t *j)
   free(j);
 }
 
-/* Check on jobs
-
-    Options will be used to waitpid to, e.g., determine blocking with WNOHANG.
-*/
+/*
+ * Check on jobs
+ * Options will be used to waitpid to, e.g., determine blocking with WNOHANG.
+ */
 void check_jobs(int options)
 {
   // TODO #4: check each job in turn and output its status
-  job_t *job = jobs;
+  job_t *jptr = jobs;
   job_t *temp;
   pid_t jpid;
   int wstatus;
 
-  while (job) {
-    if (WIFSTOPPED(job->status)) fprintf(stderr, "job '%s' status %d\n", job->command, job->status);
+  // if pid 0, print 'job still running
+  // if background jobs terminated unsuccessfully, print job command and status
+  // else if terminated successfully, print job command complete
+  while (jptr) {
+    if ((jpid = waitpid(job->pid, &job->status, options) == 0)
+      fprintf("job %s still running\n", job->command);
+    if (WIFSTOPPED(job->status))
+      fprintf(stderr, "job '%s' status %d\n", job->command, job->status);
     else fprintf(stderr, "job '%s' complete\n", job->command);
-    temp = job->next;
-    free_job(job);
-    job = temp;
+    temp = jptr->next;
+    free_job(jptr);
+    jptr = temp;
   }
 }
 
@@ -173,6 +179,8 @@ int main(int argc, char *argv[])
   while (1)
   {
     // TODO #5: check on jobs, update the user
+    // check jobs and return immediately if no child has exited
+    check_jobs(WNOHANG);
 
     // TODO #6: only update the user when something has changed
 
@@ -193,7 +201,7 @@ int main(int argc, char *argv[])
         // TODO #4: wait for all jobs to finish
         if (jobs) {
           fprintf(stderr, "\nJobs are still running...\n");
-          check_jobs(0); // set options to 0 for now, I think
+          check_jobs(0); // pass options as 0 for now
         }
         fprintf(stderr, "\nGoodbye!\n");
         return 0;
