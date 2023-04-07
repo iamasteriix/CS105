@@ -2,7 +2,7 @@
  * ish - Core system-call logic of an tiny interactive shell.
  *
  * @author: Chuck Lugai
- * @author: Omosh Otieno
+ * @author: Russel Otieno
  */
 
 #include <assert.h>
@@ -127,11 +127,11 @@ void check_jobs(int options)
   // if background jobs terminated unsuccessfully, print job command and status
   // else if terminated successfully, print job command complete
   while (jptr) {
-    if ((jpid = waitpid(job->pid, &job->status, options) == 0)
-      fprintf("job '%s' still running\n", job->command);
-    if (WIFSTOPPED(job->status))
-      fprintf(stderr, "job '%s' status %d\n", job->command, job->status);
-    else fprintf(stderr, "job '%s' complete\n", job->command);
+    if ((jpid = waitpid(jptr->pid, &jptr->status, options) == 0))
+      fprintf(stderr, "job '%s' still running\n", jptr->command);
+    if (WIFSTOPPED(jptr->status))
+      fprintf(stderr, "job '%s' status %d\n", jptr->command, jptr->status);
+    else fprintf(stderr, "job '%s' complete\n", jptr->command);
     temp = jptr->next;
     free_job(jptr);
     jptr = temp;
@@ -191,7 +191,7 @@ int main(int argc, char *argv[])
     // TODO #5: check on jobs, update the user
     // TODO #6: only update the user when something has changed
     if (received_signal_from_child) {
-      check_jobs(WNOHANG) // check jobs and return immediately if no child has exited
+      check_jobs(WNOHANG); // check jobs and return immediately if no child has exited
       received_signal_from_child = 0;
     }
 
