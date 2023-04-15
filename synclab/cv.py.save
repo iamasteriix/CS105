@@ -29,9 +29,6 @@ class Club:
         self.goth_count = 0               # num goths in club
         self.hipster_count = 0            # num hipsters in club
         self.capacity = capacity          # only used for optional questions
-        self.lock = Lock()
-        self.goths = Condition(self.lock)
-        self.hipsters = Condition(self.lock)
 
 
     def __sanitycheck(self):
@@ -47,32 +44,23 @@ class Club:
 
 
     def goth_enter(self):
-        with self.lock:
-          while self.hipster_count > 0: self.goths.wait()
-          self.goth_count +=1
-          self.__sanitycheck()
-
+        self.goth_count +=1
+        self.__sanitycheck()
 
 
     def goth_exit(self):
-        with self.lock:
-          self.goth_count -= 1
-          if self.goth_count == 0: self.hipsters.notify_all()
-          self.__sanitycheck()
+        self.goth_count -= 1
+        self.__sanitycheck()
 
 
     def hipster_enter(self):
-        with self.lock:
-          while self.goth_count > 0: self.hipsters.wait()
-          self.hipster_count += 1
-          self.__sanitycheck()
+        self.hipster_count += 1
+        self.__sanitycheck()
 
 
     def hipster_exit(self):
-        with self.lock:
-          self.hipster_count -= 1
-          if self.hipster_count == 0: self.goths.notify_all()
-          self.__sanitycheck()
+        self.hipster_count -= 1
+        self.__sanitycheck()
 
 
 class Goth(Thread):
