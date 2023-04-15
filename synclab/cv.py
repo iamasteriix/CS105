@@ -48,8 +48,11 @@ class Club:
 
     def goth_enter(self):
         with self.lock:
-          while self.hipster_count > 0: self.goths.wait()
-          self.goth_count +=1
+          while self.hipster_count > 0 and self.goth_count < self.capacity:
+            self.goths.wait()
+          if self.goth_count < self.capacity:
+            self.goth_count +=1
+            self.hipsters.notify()
           self.__sanitycheck()
 
 
@@ -57,21 +60,24 @@ class Club:
     def goth_exit(self):
         with self.lock:
           self.goth_count -= 1
-          if self.goth_count == 0: self.hipsters.notify_all()
+          if self.goth_count == 0: self.hipsters.notify()
           self.__sanitycheck()
 
 
     def hipster_enter(self):
         with self.lock:
-          while self.goth_count > 0: self.hipsters.wait()
-          self.hipster_count += 1
+          while self.goth_count > 0 and self.hipster_count < self.capacity:
+            self.hipsters.wait()
+          if self.hipster_count < self.capacity:
+            self.hipster_count += 1
+            self.goths.notify()
           self.__sanitycheck()
 
 
     def hipster_exit(self):
         with self.lock:
           self.hipster_count -= 1
-          if self.hipster_count == 0: self.goths.notify_all()
+          if self.hipster_count == 0: self.goths.notify()
           self.__sanitycheck()
 
 
