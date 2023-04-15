@@ -1,0 +1,10 @@
+# Collaborators:
+# - Chuck Lugai
+# - Russel Otieno
+
+1. Not as long as we thought we would. The Python syntax was weird for Chuck to start, but we fixed
+   this thing up in a couple hours accidentally.
+
+2. It was alright, I guess.
+
+3. What's a learning community?
