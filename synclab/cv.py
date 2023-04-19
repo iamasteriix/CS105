@@ -51,7 +51,7 @@ class Club:
         self.switch.acquire()
         self.lock.acquire()
         while self.hipster_count > 0 or self.goth_count >= self.capacity:
-          self.goths.wait()
+            self.goths.wait()
         self.goth_count +=1
         self.lock.release()
         self.__sanitycheck()
@@ -60,10 +60,12 @@ class Club:
 
 
     def goth_exit(self):
-        with self.lock:
+        self.lock.acquire()
+        try:
           self.goth_count -= 1
-          if self.goth_count == 0: self.hipsters.notify()
+          if self.hipster_count == 0: self.hipsters.notify()
           self.__sanitycheck()
+        finally: self.lock.release()
 
 
     def hipster_enter(self):
@@ -78,10 +80,12 @@ class Club:
 
 
     def hipster_exit(self):
-        with self.lock:
+        self.lock.acquire()
+        try:
           self.hipster_count -= 1
           if self.hipster_count == 0: self.goths.notify()
           self.__sanitycheck()
+        finally: self.lock.release()
 
 
 class Goth(Thread):
