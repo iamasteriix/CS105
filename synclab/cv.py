@@ -5,8 +5,8 @@ import time, random
 
 #######################################################
 #
-# Author: Chuck Lugai
-# Author: Russel Otieno
+# Collaborator: Chuck Lugai
+# Collaborator: Russel Otieno
 #
 #######################################################
 
@@ -30,6 +30,7 @@ class Club:
         self.hipster_count = 0            # num hipsters in club
         self.capacity = capacity          # only used for optional questions
         self.lock = Lock()
+        self.switch = Lock()
         self.goths = Condition(self.lock)
         self.hipsters = Condition(self.lock)
 
@@ -47,13 +48,14 @@ class Club:
 
 
     def goth_enter(self):
-        with self.lock:
-          while self.hipster_count > 0 and self.goth_count < self.capacity:
-            self.goths.wait()
-          if self.goth_count < self.capacity:
-            self.goth_count +=1
-            self.hipsters.notify()
-          self.__sanitycheck()
+        self.switch.acquire()
+        self.lock.acquire()
+        while self.hipster_count > 0 or self.goth_count >= self.capacity:
+          self.goths.wait()
+        self.goth_count +=1
+        self.lock.release()
+        self.__sanitycheck()
+        self.switch.release()
 
 
 
@@ -65,13 +67,14 @@ class Club:
 
 
     def hipster_enter(self):
-        with self.lock:
-          while self.goth_count > 0 and self.hipster_count < self.capacity:
-            self.hipsters.wait()
-          if self.hipster_count < self.capacity:
-            self.hipster_count += 1
-            self.goths.notify()
-          self.__sanitycheck()
+        self.switch.acquire()
+        self.lock.acquire()
+        while self.goth_count > 0 or self.hipster_count >= self.capacity:
+          self.hipsters.wait()
+        self.hipster_count += 1
+        self.lock.release()
+        self.__sanitycheck()
+        self.switch.release()
 
 
     def hipster_exit(self):
