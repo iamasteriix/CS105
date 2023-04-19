@@ -1,6 +1,9 @@
 /*
  * mm.c, a basic implicit list implementation
  *
+ * @author: Chuck Lugai
+ * @author: Russel Otieno
+ *
  */
 
 #include <stdio.h>
@@ -21,15 +24,15 @@ int mm_check(void);
  ********************************************************/
 team_t team = {
     /* Team name */
-    "a",
+    "eight",
     /* First member's full name */
-    "b",
+    "Chuck Lugai",
     /* First member's email address */
-    "c",
+    "cjlc2018@mymail.pomona.edu",
     /* Second member's full name (leave blank if none) */
-    "",
+    "Russel Otieno",
     /* Second member's email address (leave blank if none) */
-    ""
+    "rooa2020@mymail.pomona.edu"
 };
 
 #define ALIGNMENT 8
@@ -47,12 +50,12 @@ char *search;  // use to implement next_fit
 
 
 /*
- * Internally, all pointers are of type char*. 
+ * Internally, all pointers are of type char*.
  *
  * These functions are helpers for navigating block structure.
  * mostly for type casts to extract values from fields.
  *
- * They are functions rather than macros to get more secure 
+ * They are functions rather than macros to get more secure
  * semantics and better readability. They will be inlined by -O2.
  */
 
@@ -105,7 +108,7 @@ size_t payload_size(size_t blocksize) {
 }
 
 // given size of payload, round up to multiple of alignment
-size_t roundup(size_t size) { 
+size_t roundup(size_t size) {
   return (size + ALIGNMENT - 1) & (~(ALIGNMENT - 1));
 }
 
@@ -135,7 +138,7 @@ int mm_init(void) {
 
   // initialize search pointer to free block
   search = base;
-  
+
   return 0;
 }
 
@@ -154,7 +157,7 @@ inline char * first_fit(size_t totalsize){
   if(p >= top){
     p = top;
   }
-  
+
   return p;
 }
 
@@ -181,14 +184,14 @@ void *mm_malloc(size_t size) {
 
   // search for a free block that fits this size
   p = first_fit(totalsize); // TODO #2: switch to next_fit
-  //p = next_fit(totalsize); 
+  //p = next_fit(totalsize);
 
   // if no available block, extend heap
   if (p == top) {
     // avoid making lots of small blocks
     if(totalsize < 256){ // value 256 was determined experimentally
       excess = 256;
-      blocksize = totalsize + excess;      
+      blocksize = totalsize + excess;
     } else {
       excess = 0;
       blocksize = totalsize;
@@ -205,7 +208,7 @@ void *mm_malloc(size_t size) {
   // if excess isn't big enough, don't bother splitting
   if (excess <= 2 * WORD_SIZE + MIN_PAYLOAD) {
     totalsize = blocksize;
-    mark_block(p, totalsize, 1); 
+    mark_block(p, totalsize, 1);
   } else { // split block
     mark_block(p, totalsize, 1);
     mark_block(p + totalsize, excess, 0);
@@ -222,7 +225,7 @@ void mm_free(void *p) {
 
   // coalesce
   // TODO #1: implement coalescing
-  
+
   // mark as un-allocated
   mark_block(bp, size, 0);
 
@@ -245,7 +248,7 @@ int mm_check(void) {
   // loop through all the blocks in the heap for common errors
   char *p = base;
   while (p < top) {
-    // check for contiguously allocated blocks 
+    // check for contiguously allocated blocks
     if (prev_is_free && is_allocated(p)) {
       printf("contiguous allocated blocks!\n");
       result = -1;
@@ -265,6 +268,6 @@ int mm_check(void) {
     printf("missed the top!\n");
     result = -1;
   }
-  
+
   return result;
 }
