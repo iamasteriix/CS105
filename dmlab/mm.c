@@ -1,8 +1,8 @@
 /*
  * mm.c, a basic implicit list implementation
  *
- * @author: Chuck Lugai
- * @author: Russel Otieno
+ * @collaborator: Chuck Lugai
+ * @collaborator: Russel Otieno
  *
  */
 
@@ -154,9 +154,7 @@ inline char * first_fit(size_t totalsize){
   }
 
   // if no available block, return top
-  if(p >= top){
-    p = top;
-  }
+  if(p >= top) p = top;
 
   return p;
 }
@@ -166,7 +164,16 @@ inline char * first_fit(size_t totalsize){
 // return top if no such block exists
 inline char * next_fit(size_t totalsize){
   // TODO #2: implement next_fit
-  return NULL;
+  // search from current position of heap to top
+  char *p = search;
+  while (p < top && (is_allocated(p) || block_size(p) < totalsize)){
+    p += block_size(p);
+  }
+
+  // if no available block, return top
+  if (p >= top) p = top;
+
+  return p;
 }
 
 
@@ -183,8 +190,8 @@ void *mm_malloc(size_t size) {
   }
 
   // search for a free block that fits this size
-  p = first_fit(totalsize); // TODO #2: switch to next_fit
-  //p = next_fit(totalsize);
+  //p = first_fit(totalsize); // TODO #2: switch to next_fit
+  p = next_fit(totalsize);
 
   // if no available block, extend heap
   if (p == top) {
