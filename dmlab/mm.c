@@ -232,10 +232,16 @@ void mm_free(void *p) {
 
   // coalesce
   // TODO #1: implement coalescing
+  char *next, *prev;
+  next = bp + size;
+  prev = bp - size;
+  if (*next & 1) *bp += *next;
+  if (*prev & 1) *bp -= *prev;
 
   // mark as un-allocated
   mark_block(bp, size, 0);
 
+  search = bp;
 }
 
 
