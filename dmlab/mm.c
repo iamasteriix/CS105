@@ -190,7 +190,9 @@ void *mm_malloc(size_t size) {
   }
 
   // search for a free block that fits this size
-  //p = first_fit(totalsize); // TODO #2: switch to next_fit
+  // TODO #2: switch to next_fit
+  // TODO #3: switch to best_fit
+  // p = first_fit(totalsize);
   p = next_fit(totalsize);
 
   // if no available block, extend heap
@@ -230,16 +232,24 @@ void mm_free(void *p) {
   char *bp = block_pointer(p);
   size_t size = block_size(bp);
 
-  // coalesce
-  // TODO #1: implement coalescing
-  char *next, *prev;
-  next = bp + size;
-  prev = bp - size;
-  if (*next & 1) *bp += *next;
-  if (*prev & 1) *bp -= *prev;
+  mark_block(bp, size, 0); // mark block as free
 
-  // mark as un-allocated
-  mark_block(bp, size, 0);
+  // TODO #1: implement coalescing
+
+  // coalesce free blocks
+  char *prev_footer = prev_footer_pointer(bp);
+  char *next_header = bp + size;
+  int prev_alloc = is_allocated(prev_footer);
+  int next_alloc = is_allocated(next_header);
+
+  if (!prev_alloc) {
+    size += block_size(prev_footer);  // add size of previous block
+    mark_block(prev_footer, size, 0); // mark as unallocated
+  }
+  if (!next_alloc) {
+    size += block_size(next_header);
+    mark_block(bp, size, 0);
+  }
 
   search = bp;
 }
