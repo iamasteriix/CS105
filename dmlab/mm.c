@@ -59,7 +59,6 @@ char *search;  // use to implement next_fit
  * semantics and better readability. They will be inlined by -O2.
  */
 
-
 // given pointer to payload, return pointer to start of block
 char *block_pointer(void *p) {
   return (char*)p - WORD_SIZE;
@@ -191,7 +190,6 @@ void *mm_malloc(size_t size) {
 
   // search for a free block that fits this size
   // TODO #2: switch to next_fit
-  // TODO #3: switch to best_fit
   // p = first_fit(totalsize);
   p = next_fit(totalsize);
 
@@ -232,24 +230,29 @@ void mm_free(void *p) {
   char *bp = block_pointer(p);
   size_t size = block_size(bp);
 
-  mark_block(bp, size, 0); // mark block as free
-
   // TODO #1: implement coalescing
 
   // coalesce free blocks
   char *prev_footer = prev_footer_pointer(bp);
   char *next_header = bp + size;
-  int prev_alloc = is_allocated(prev_footer);
-  int next_alloc = is_allocated(next_header);
+  size_t p_size;
 
-  if (!prev_alloc) {
-    size += block_size(prev_footer);  // add size of previous block
-    mark_block(prev_footer, size, 0); // mark as unallocated
-  }
-  if (!next_alloc) {
+  // verify prev and next blocks exist
+  if (prev_footer < base && next_header > top) {
+    // assign only current block
+    // block is marked as unallocated after conditionals
+  } else if (next_header < top && !is_allocated(next_header)) {
+    // assign current and next
     size += block_size(next_header);
-    mark_block(bp, size, 0);
+  } else if (prev_footer > base && !is_allocated(prev_footer)) {
+    // assign prev and current block
+    p_size = block_size(prev_footer);
+    size += p_size;
+    bp -= p_size;
   }
+
+  // mark block as unallocated
+  mark_block(bp, size, 0);
 
   search = bp;
 }
