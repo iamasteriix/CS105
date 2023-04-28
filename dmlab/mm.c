@@ -181,7 +181,7 @@ void *mm_malloc(size_t size) {
   size_t totalsize = adjusted_size(size);
   size_t blocksize;
   size_t excess;
-  char *p;// = search;
+  char *p; // = search;
   //char *anchor = search;
 
   if (size == 0){
